@@ -87,7 +87,7 @@ export async function usersMe(req, res) {
       return res.status(401).send({ message: "Usuario não encontrado" });
     }
 
-    res.status(200).send(object.rows);
+    res.status(200).send(object.rows[0]);
   } catch (err) {
     res.status(500).send(err.message);
   }
