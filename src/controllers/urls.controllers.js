@@ -25,7 +25,6 @@ export async function urlsShorten(req, res) {
     const urlObject = await db.query(`SELECT * FROM urls WHERE short_url=$1;`, [
       shorten,
     ]);
-    // console.log(urlObject.rows[0].id);
 
     res.status(200).send({
       id: urlObject.rows[0].id,
@@ -37,7 +36,19 @@ export async function urlsShorten(req, res) {
 }
 
 export async function getUrlsById(req, res) {
+  const { id } = req.params;
+
+  if (isNaN(id) || id <= 0) {
+    return res.status(404).send({ message: "URL não encontrada" });
+  }
+
   try {
+    const url = await db.query(
+      `SELECT id, short_url, url FROM urls WHERE id = $1;`,
+      [id]
+    );
+    console.log(url);
+    res.status(200).send(url.rows[0]);
   } catch (err) {
     res.status(500).send(err.message);
   }
