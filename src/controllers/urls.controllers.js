@@ -26,7 +26,7 @@ export async function urlsShorten(req, res) {
       shorten,
     ]);
 
-    res.status(200).send({
+    res.status(201).send({
       id: urlObject.rows[0].id,
       shortUrl: shorten,
     });
