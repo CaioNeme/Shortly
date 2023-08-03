@@ -81,7 +81,7 @@ export async function deleteUrlsById(req, res) {
   const token = authorization?.replace("Bearer ", "");
 
   if (!token) {
-    return res.sendStatus(401);
+    return res.status(401).send({ message: "Falha na autorização" });
   }
 
   if (isNaN(id) || id <= 0) {

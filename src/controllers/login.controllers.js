@@ -57,7 +57,34 @@ export async function signIn(req, res) {
 }
 
 export async function usersMe(req, res) {
+  const { authorization } = req.headers;
+  const token = authorization?.replace("Bearer ", "");
+
+  if (!token) {
+    return res.status(401).send({ message: "Falha na autorização" });
+  }
+
   try {
+    const object = await db.query(
+      `
+      SELECT users.id, users.name,
+      CAST(SUM(urls.accesses) AS INTEGER) AS "visitCount",
+      JSON_AGG(JSON_BUILD_OBJECT(
+        'id',urls.id,
+        'shortUrl', urls.short_url,
+        'url', urls.url,
+        'visitCount', urls.accesses
+        )ORDER BY urls.id) AS shortenedUrls
+      FROM sessions
+      JOIN users ON sessions.user_id = users.id
+      JOIN urls ON urls.user_id = users.id
+      WHERE token=$1
+      GROUP BY users.id
+      ;`,
+      [token]
+    );
+
+    res.status(200).send(object.rows);
   } catch (err) {
     res.status(500).send(err.message);
   }

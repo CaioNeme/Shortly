@@ -7,6 +7,6 @@ const loginRouter = Router();
 
 loginRouter.post("/signin", validateSchema(signInSchema), signIn);
 loginRouter.post("/signup", validateSchema(signUpSchema), signUp);
-loginRouter.get("users/me", usersMe);
+loginRouter.get("/users/me", usersMe);
 
 export default loginRouter;
