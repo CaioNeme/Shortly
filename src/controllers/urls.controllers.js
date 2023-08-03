@@ -47,6 +47,9 @@ export async function getUrlsById(req, res) {
       `SELECT id, short_url, url FROM urls WHERE id = $1;`,
       [id]
     );
+    if (url.rowCount != 1) {
+      return res.status(404).send({ message: "URL não encontrada" });
+    }
     res.status(200).send(url.rows[0]);
   } catch (err) {
     res.status(500).send(err.message);
