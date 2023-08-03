@@ -74,7 +74,7 @@ export async function usersMe(req, res) {
         'shortUrl', urls.short_url,
         'url', urls.url,
         'visitCount', urls.accesses
-        )ORDER BY urls.id) AS shortenedUrls
+        )ORDER BY urls.id) AS "shortenedUrls"
       FROM sessions
       JOIN users ON sessions.user_id = users.id
       JOIN urls ON urls.user_id = users.id
