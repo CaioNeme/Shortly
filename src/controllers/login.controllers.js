@@ -50,7 +50,7 @@ export async function signIn(req, res) {
       verification.rows[0].id,
     ]);
 
-    res.status(200).send(token);
+    res.status(200).send({ token });
   } catch (err) {
     res.status(500).send(err.message);
   }
