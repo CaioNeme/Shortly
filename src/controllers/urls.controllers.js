@@ -1,7 +1,36 @@
 import { db } from "../database/database.connection.js";
+import { nanoid } from "nanoid";
 
 export async function urlsShorten(req, res) {
+  const { authorization } = req.headers;
+  const { url } = req.body;
+  const token = authorization?.replace("Bearer ", "");
+  const shorten = nanoid(8);
+
+  if (!token) return res.sendStatus(401);
+
   try {
+    const user = await db.query(`SELECT * FROM sessions WHERE token = $1`, [
+      token,
+    ]);
+
+    if (user.rowCount != 1) {
+      return res.status(401).send({ message: "Falha na autorização" });
+    }
+    await db.query(
+      `INSERT INTO urls (url, short_url, user_id) VALUES ($1, $2, $3);`,
+      [url, shorten, user.rows[0].user_id]
+    );
+
+    const urlObject = await db.query(`SELECT * FROM urls WHERE short_url=$1;`, [
+      shorten,
+    ]);
+    // console.log(urlObject.rows[0].id);
+
+    res.status(200).send({
+      id: urlObject.rows[0].id,
+      shortUrl: shorten,
+    });
   } catch (err) {
     res.status(500).send(err.message);
   }

@@ -5,14 +5,16 @@ import { v4 as uuid } from "uuid";
 export async function signUp(req, res) {
   const { email, name, password, confirmPassword } = req.body;
   if (password != confirmPassword) {
-    return res.status(422).send("As senhas não coincidem");
+    return res.status(422).send({ message: "As senhas não coincidem" });
   }
   try {
     const verification = await db.query(`SELECT * FROM users WHERE email=$1;`, [
       email,
     ]);
     if (verification.rowCount > 0) {
-      return res.status(409).send("Esse email já esta sendo usado");
+      return res
+        .status(409)
+        .send({ message: "Esse email já esta sendo usado" });
     }
 
     const passwordHash = bcrypt.hashSync(password, 10);
@@ -35,11 +37,11 @@ export async function signIn(req, res) {
       email,
     ]);
     if (verification.rowCount != 1) {
-      return res.status(401).send("Dados incorretos");
+      return res.status(401).send({ message: "Dados incorretos" });
     }
 
     if (bcrypt.compareSync(password, verification.rows[0].password) === false) {
-      return res.status(401).send("Dados incorretos");
+      return res.status(401).send({ message: "Dados incorretos" });
     }
 
     const token = uuid();
