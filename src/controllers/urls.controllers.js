@@ -44,7 +44,7 @@ export async function getUrlsById(req, res) {
 
   try {
     const url = await db.query(
-      `SELECT id, short_url, url FROM urls WHERE id = $1;`,
+      `SELECT id, short_url AS "shortUrl", url FROM urls WHERE id = $1;`,
       [id]
     );
     if (url.rowCount != 1) {

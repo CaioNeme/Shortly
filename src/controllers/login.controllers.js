@@ -83,6 +83,9 @@ export async function usersMe(req, res) {
       ;`,
       [token]
     );
+    if (object.rowCount != 1) {
+      return res.status(401).send({ message: "Usuario não encontrado" });
+    }
 
     res.status(200).send(object.rows);
   } catch (err) {
